@@ -7,6 +7,9 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Service
 public class PolicyHandler{
 
@@ -25,8 +28,9 @@ public class PolicyHandler{
             // 노티 내용 SET
             Notification notification = new Notification();
             notification.setUserId(bookingCreated.getBookingUserId());
-            notification.setContents("conference room reservation is complete");
-            notification.setSendDtm(bookingCreated.getUseStartDtm());
+            notification.setContents("conference room[" + bookingCreated.getRoomId() + "] reservation is complete");
+            String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            notification.setSendDtm(nowDate);
             notificationRepository.save(notification);
             System.out.println("##### listener SendNotification : " + bookingCreated.toJson());
         }
@@ -38,7 +42,8 @@ public class PolicyHandler{
             Notification notification = new Notification();
             notification.setUserId(bookingChanged.getBookingUserId());
             notification.setContents("reservation has been changed");
-            notification.setSendDtm(bookingChanged.getUseStartDtm());
+            String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            notification.setSendDtm(nowDate);
             notificationRepository.save(notification);
             System.out.println("##### listener SendNotification : " + bookingChanged.toJson());
         }
@@ -50,7 +55,8 @@ public class PolicyHandler{
             Notification notification = new Notification();
             notification.setUserId(bookingCancelled.getBookingUserId());
             notification.setContents("reservation has been canceled");
-            notification.setSendDtm(bookingCancelled.getUseStartDtm());
+            String nowDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            notification.setSendDtm(nowDate);
             notificationRepository.save(notification);
             System.out.println("##### listener SendNotification : " + bookingCancelled.toJson());
         }
